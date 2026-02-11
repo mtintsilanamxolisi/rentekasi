@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Rentekasi | Find Listings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+:root{
+  --primary:#0f766e;
+  --secondary:#ecfeff;
+  --dark:#0f172a;
+  --muted:#64748b;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:#f8fafc;
+  color:var(--dark)
+}
+a{text-decoration:none}
+
+/* NAV */
+nav{
+  background:rgba(15,118,110,.95);
+  backdrop-filter:blur(8px);
+  padding:1rem 2rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 8px 30px rgba(0,0,0,.15)
+}
+nav strong{color:#fff;font-size:1.2rem}
+nav ul{list-style:none;display:flex;gap:1rem;margin:0;padding:0}
+nav a{color:#fff;font-weight:600}
+
+.nav-whatsapp{
+  background:linear-gradient(135deg,#25D366,#1ebe5d);
+  padding:.55rem 1rem;
+  border-radius:999px;
+}
+
+/* HERO */
+.hero{
+  height:320px;
+  background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url('https://images.unsplash.com/photo-1560448075-bb485b067938') center/cover;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+}
+.hero h1{font-size:2.2rem}
+
+/* SECTIONS */
+section{padding:3rem 2rem}
+h2{margin-bottom:1.5rem}
+
+/* FILTERS */
+.filters{
+  background:#fff;
+  padding:1.5rem;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1rem;
+  margin-bottom:2.5rem
+}
+.filters input,.filters select{
+  padding:.65rem;
+  border-radius:8px;
+  border:1px solid #e2e8f0;
+}
+.filters button{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:.7rem;
+  font-weight:600;
+  cursor:pointer
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:1.5rem
+}
+
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+  display:flex;
+  flex-direction:column;
+  position:relative
+}
+
+/* FEATURED BADGE */
+.featured-badge{
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:#16a34a;
+  color:#fff;
+  padding:.35rem .7rem;
+  border-radius:999px;
+  font-size:.7rem;
+  font-weight:700;
+  z-index:10
+}
+
+/* SLIDER */
+.slider{position:relative;height:200px;overflow:hidden}
+.slider-track{
+  display:flex;
+  height:100%;
+  transition:transform .4s ease
+}
+.slider-track img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  flex-shrink:0;
+  cursor:pointer
+}
+.slider-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(0,0,0,.55);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  padding:8px 12px;
+  cursor:pointer
+}
+.slider-btn.left{left:8px}
+.slider-btn.right{right:8px}
+
+/* CARD BODY */
+.card-body{
+  padding:1rem;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem
+}
+.details{font-size:.9rem;color:var(--muted)}
+.whatsapp{
+  margin-top:auto;
+  background:linear-gradient(135deg,#25D366,#1ebe5d);
+  color:#fff;
+  padding:.65rem;
+  border-radius:10px;
+  text-align:center;
+  font-weight:600
+}
+
+/* PAGINATION */
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:.5rem;
+  margin-top:2rem
+}
+.pagination button{
+  padding:.5rem .8rem;
+  border:none;
+  border-radius:8px;
+  background:#e2e8f0;
+  cursor:pointer
+}
+.pagination button.active{
+  background:var(--primary);
+  color:#fff
+}
+
+footer{
+  background:var(--dark);
+  color:#fff;
+  text-align:center;
+  padding:2rem;
+  margin-top:3rem
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <strong>Rentekasi</strong>
+  <ul>
+    <li><a href="#all">All Listings</a></li>
+    <li>
+      <a class="nav-whatsapp"
+         href="https://wa.me/278XXXXXXXX?text=Hello%20Rentekasi%20I%20would%20like%20to%20list%20my%20property"
+         target="_blank">
+        List on Rentekasi
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>Find Rental Listings Across South Africa</h1>
+</div>
+
+<section id="all">
+
+<div class="filters">
+  <input type="text" id="townshipFilter" placeholder="Search township..." />
+  <select id="typeFilter">
+    <option value="">All Types</option>
+    <option>Room</option>
+    <option>House</option>
+    <option>Student</option>
+    <option>Commercial</option>
+    <option>Guest House</option>
+  </select>
+  <button onclick="applyFilters()">Apply Filters</button>
+</div>
+
+<h2>⭐ Featured Listings</h2>
+<div id="featured" class="grid"></div>
+
+<h2>All Listings</h2>
+<div id="listings" class="grid"></div>
+<div id="pagination" class="pagination"></div>
+
+</section>
+
+<footer>© 2026 Rentekasi</footer>
+
+<script>
+'use strict';
+
+const PER_PAGE = 12;
+let currentPage = 1;
+let filteredData = [];
+
+const listingsData = [
+{
+  id:101,
+  title:'Sikhula Sonke Guest House1',
+  township:'Soweto',
+  province:'Gauteng',
+  type:'Guest House',
+  price:700,
+  priceType:'night',
+  featured:true,
+  description:'Comfortable guest house with secure parking.',
+  images:[
+          'images/guesthouses/id200a.jpg', 'images/guesthouses/id200b.jpg', 'images/guesthouses/id200c.jpg'
+  ],
+  whatsapp:'https://wa.me/27821234567'
+},
+{
+  id:102,
+  title:'Room to Rent – Mamelodi East (ext. 18)',
+  township:'Mamelodi',
+  province:'Gauteng',
+  type:'Room',
+  price:1500,
+  priceType:'month',
+  featured:true,
+  description:'RDP zone not far from Pinasport train station and RDP chisa nyana',
+  images:['images/rooms/ID102a.jpg', 'images/rooms/ID102b.jpg', 'images/rooms/ID102c.jpg'],
+  whatsapp:'https://wa.me/27821234567'
+}
+,
+{
+  id:103,
+  title:'Cozy Room in Durban North',
+  township:'Durban North',
+  province:'KwaZulu-Natal',
+  type:'Room',
+  price:2500,
+  priceType:'month',
+  featured:false,
+  description:'A cozy room available in a shared apartment in Durban North.',
+  images:['images/rooms/ID103a.jpg', 'images/rooms/ID103b.jpg'],
+  whatsapp:'https://wa.me/27829876543'
+},
+{
+  id:104,
+  title:'Room to Rent in Daveyton',
+  township:'Daveyton',
+  province:'Gauteng',
+  type:'Room',
+  price:900,
+  priceType:'month',
+  featured:true,
+  description:'A modern room with in a secure home in Daveyton.',
+  images:['images/rooms/ID104a.jpg', 'images/rooms/ID104b.jpg', 'images/rooms/ID104c.jpg'],
+  whatsapp:'https://wa.me/27821234567'
+}
+];
+
+// auto sort featured first
+listingsData.sort((a,b)=>b.featured-a.featured);
+
+function createCard(l){
+  if(!l.images || !l.images.length){
+    l.images=['images/placeholder.jpg'];
+  }
+
+  const card=document.createElement('div');
+  card.className='card';
+
+  if(l.featured){
+    const badge=document.createElement('span');
+    badge.className='featured-badge';
+    badge.textContent='FEATURED';
+    card.appendChild(badge);
+  }
+
+  let index=0;
+  const slider=document.createElement('div');
+  slider.className='slider';
+
+  const track=document.createElement('div');
+  track.className='slider-track';
+
+  l.images.forEach(src=>{
+    const img=document.createElement('img');
+    img.src=src;
+    track.appendChild(img);
+  });
+
+  const left=document.createElement('button');
+  left.className='slider-btn left';
+  left.innerHTML='‹';
+  left.onclick=()=>{index=(index-1+l.images.length)%l.images.length;track.style.transform=`translateX(-${index*100}%)`};
+
+  const right=document.createElement('button');
+  right.className='slider-btn right';
+  right.innerHTML='›';
+  right.onclick=()=>{index=(index+1)%l.images.length;track.style.transform=`translateX(-${index*100}%)`};
+
+  slider.append(track,left,right);
+
+  const body=document.createElement('div');
+  body.className='card-body';
+  body.innerHTML=`
+    <strong>${l.title}</strong>
+    <p class="details">${l.township}, ${l.province}</p>
+    <p class="details">💰 R${l.price} / ${l.priceType}</p>
+    <p class="details">${l.description}</p>
+    <a class="whatsapp" href="${l.whatsapp}" target="_blank">WhatsApp Owner</a>
+  `;
+
+  card.append(slider,body);
+  return card;
+}
+
+function renderFeatured(){
+  const f=document.getElementById('featured');
+  f.innerHTML='';
+  listingsData.filter(l=>l.featured).slice(0,10).forEach(l=>f.appendChild(createCard(l)));
+}
+
+function renderListings(){
+  const l=document.getElementById('listings');
+  l.innerHTML='';
+  const start=(currentPage-1)*PER_PAGE;
+  filteredData.slice(start,start+PER_PAGE).forEach(x=>l.appendChild(createCard(x)));
+  renderPagination();
+}
+
+function renderPagination(){
+  const p=document.getElementById('pagination');
+  p.innerHTML='';
+  const pages=Math.ceil(filteredData.length/PER_PAGE);
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement('button');
+    b.textContent=i;
+    if(i===currentPage)b.classList.add('active');
+    b.onclick=()=>{currentPage=i;renderListings()};
+    p.appendChild(b);
+  }
+}
+
+function applyFilters(){
+  const t=document.getElementById('townshipFilter').value.toLowerCase();
+  const type=document.getElementById('typeFilter').value;
+
+  filteredData=listingsData.filter(l=>{
+    return l.township.toLowerCase().includes(t) && (!type||l.type===type);
+  }).sort((a,b)=>b.featured-a.featured);
+
+  currentPage=1;
+  renderListings();
+}
+
+filteredData=[...listingsData];
+renderFeatured();
+renderListings();
+</script>
+
+</body>
+</html>

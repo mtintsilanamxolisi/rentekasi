@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -192,18 +192,167 @@ footer{
   padding:2rem;
   margin-top:3rem
 }
+
+/* MENU TOGGLE */
+
+.menu-toggle{
+  display:none;
+  font-size:1.6rem;
+  background:none;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* MOBILE MENU */
+@media(max-width:768px){
+  nav{
+    flex-wrap:wrap;
+  }
+
+  .menu-toggle{
+    display:block;
+  }
+
+  .nav-links{
+    width:100%;
+    display:none;
+    flex-direction:column;
+    gap:1rem;
+    background:rgba(15,118,110,.98);
+    margin-top:1rem;
+    padding:1rem;
+    border-radius:12px;
+    animation:fadeSlide .3s ease;
+  }
+
+  .nav-links.show{
+    display:flex;
+  }
+}
+
+@keyframes fadeSlide{
+  from{opacity:0; transform:translateY(-10px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* FILTER FLOATING BUTTON */
+
+.filter-fab{
+  display:none;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:linear-gradient(135deg,#0f766e,#0891b2);
+  color:#fff;
+  border:none;
+  padding:.8rem 1.1rem;
+  border-radius:999px;
+  font-weight:600;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  z-index:200;
+}
+
+/* MOBILE FILTER MODAL */
+.mobile-filter-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:300;
+}
+
+.mobile-filter-box{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  padding:1.5rem;
+  border-radius:20px 20px 0 0;
+  animation:slideUp .35s ease;
+  display:grid;
+  gap:1rem;
+}
+
+.filter-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.filter-header button{
+  border:none;
+  background:none;
+  font-size:1.2rem;
+  cursor:pointer;
+}
+
+.apply-btn{
+  background:linear-gradient(135deg,#0f766e,#0891b2);
+  color:#fff;
+  border:none;
+  padding:.8rem;
+  border-radius:12px;
+  font-weight:600;
+}
+
+.reset-btn{
+  background:#e5e7eb;
+  border:none;
+  padding:.7rem;
+  border-radius:12px;
+}
+
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+
+/* MOBILE ACTIVATION */
+@media(max-width:768px){
+  .desktop-filters{display:none}
+  .filter-fab{display:block}
+}
+
+.autocomplete-box{
+  position:absolute;
+  background:#fff;
+  width:100%;
+  border-radius:12px;
+  box-shadow:0 8px 22px rgba(0,0,0,.15);
+  max-height:220px;
+  overflow:auto;
+  display:none;
+  z-index:500;
+}
+
+.autocomplete-box div{
+  padding:.6rem .8rem;
+  cursor:pointer;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.autocomplete-box div:hover{
+  background:#f0fdfa;
+}
 </style>
 </head>
 
 <body>
 
-<nav>
-  <strong>Rentekasi</strong>
-  <ul>
+<nav class="navbar">
+  <strong class="logo">Rentekasi</strong>
+
+  <button class="menu-toggle" id="menuToggle">
+    ☰
+  </button>
+
+  <ul class="nav-links" id="navLinks">
     <li><a href="#all">All Listings</a></li>
     <li>
       <a class="nav-whatsapp"
-         href="https://wa.me/278XXXXXXXX?text=Hello%20Rentekasi%20I%20would%20like%20to%20list%20my%20property"
+         href="https://wa.me/278XXXXXXXX?text=Hello%20Rentekasi%20I%20want%20to%20list%20my%20property"
          target="_blank">
         List on Rentekasi
       </a>
@@ -217,8 +366,10 @@ footer{
 
 <section id="all">
 
-<div class="filters">
+<div class="filters desktop-filters">
   <input type="text" id="townshipFilter" placeholder="Search township..." />
+  <div class="autocomplete-box" id="autoBox"></div>
+
   <select id="typeFilter">
     <option value="">All Types</option>
     <option>Room</option>
@@ -227,8 +378,37 @@ footer{
     <option>Commercial</option>
     <option>Guest House</option>
   </select>
+
   <button onclick="applyFilters()">Apply Filters</button>
 </div>
+
+<!-- MOBILE FILTER DRAWER -->
+<div class="mobile-filter-overlay" id="mobileFilter">
+  <div class="mobile-filter-box">
+
+    <div class="filter-header">
+      <strong>Search Filters</strong>
+      <button id="closeFilters">✕</button>
+    </div>
+
+    <input type="text" id="townshipFilterMobile" placeholder="Search township..." />
+    <div class="autocomplete-box" id="autoBoxMobile"></div>
+
+    <select id="typeFilterMobile">
+      <option value="">All Types</option>
+      <option>Room</option>
+      <option>House</option>
+      <option>Student</option>
+      <option>Commercial</option>
+      <option>Guest House</option>
+    </select>
+
+    <button class="apply-btn" onclick="applyMobileFilters()">Apply Filters</button>
+    <button class="reset-btn" onclick="resetFilters()">Reset</button>
+
+  </div>
+</div>
+
 
 <h2>⭐ Featured Listings</h2>
 <div id="featured" class="grid"></div>
@@ -241,6 +421,8 @@ footer{
 
 <footer>© 2026 Rentekasi</footer>
 
+<button class="filter-fab" id="openFilters">🔍 Filters</button>
+
 <script>
 'use strict';
 
@@ -249,162 +431,93 @@ let currentPage = 1;
 let filteredData = [];
 
 const listingsData = [
-{
-  id:101,
-  title:'Sikhula Sonke Guest House1',
-  township:'Soweto',
-  province:'Gauteng',
-  type:'Guest House',
-  price:700,
-  priceType:'night',
-  featured:true,
-  description:'Comfortable guest house with secure parking.',
-  images:[
-          'images/guesthouses/id200a.jpg', 'images/guesthouses/id200b.jpg', 'images/guesthouses/id200c.jpg'
-  ],
-  whatsapp:'https://wa.me/27821234567'
-},
-{
-  id:102,
-  title:'Room to Rent – Mamelodi East (ext. 18)',
-  township:'Mamelodi',
-  province:'Gauteng',
-  type:'Room',
-  price:1500,
-  priceType:'month',
-  featured:true,
-  description:'RDP zone not far from Pinasport train station and RDP chisa nyana',
-  images:['images/rooms/ID102a.jpg', 'images/rooms/ID102b.jpg', 'images/rooms/ID102c.jpg'],
-  whatsapp:'https://wa.me/27821234567'
-}
-,
-{
-  id:103,
-  title:'Cozy Room in Durban North',
-  township:'Durban North',
-  province:'KwaZulu-Natal',
-  type:'Room',
-  price:2500,
-  priceType:'month',
-  featured:false,
-  description:'A cozy room available in a shared apartment in Durban North.',
-  images:['images/rooms/ID103a.jpg', 'images/rooms/ID103b.jpg'],
-  whatsapp:'https://wa.me/27829876543'
-},
-{
-  id:104,
-  title:'Room to Rent in Daveyton',
-  township:'Daveyton',
-  province:'Gauteng',
-  type:'Room',
-  price:900,
-  priceType:'month',
-  featured:true,
-  description:'A modern room with in a secure home in Daveyton.',
-  images:['images/rooms/ID104a.jpg', 'images/rooms/ID104b.jpg', 'images/rooms/ID104c.jpg'],
-  whatsapp:'https://wa.me/27821234567'
-}
+  {id:101,title:'Sikhula Sonke Guest House1',township:'Soweto',province:'Gauteng',type:'Guest House',price:700,priceType:'night',featured:true,description:'Comfortable guest house with secure parking.',images:['images/guesthouses/id200a.jpg','images/guesthouses/id200b.jpg','images/guesthouses/id200c.jpg'],whatsapp:'https://wa.me/27821234567'},
+  {id:102,title:'Room to Rent – Mamelodi East (ext. 18)',township:'Mamelodi',province:'Gauteng',type:'Room',price:1500,priceType:'month',featured:true,description:'RDP zone not far from Pinasport train station and RDP chisa nyana',images:['images/rooms/ID102a.jpg','images/rooms/ID102b.jpg','images/rooms/ID102c.jpg'],whatsapp:'https://wa.me/27821234567'},
+  {id:103,title:'Cozy Room in Durban North',township:'Durban North',province:'KwaZulu-Natal',type:'Room',price:2500,priceType:'month',featured:false,description:'A cozy room available in a shared apartment in Durban North.',images:['images/rooms/ID103a.jpg','images/rooms/ID103b.jpg'],whatsapp:'https://wa.me/27829876543'},
+  {id:104,title:'Room to Rent in Daveyton',township:'Daveyton',province:'Gauteng',type:'Room',price:900,priceType:'month',featured:true,description:'A modern room with in a secure home in Daveyton.',images:['images/rooms/ID104a.jpg','images/rooms/ID104b.jpg','images/rooms/ID104c.jpg'],whatsapp:'https://wa.me/27821234567'}
 ];
 
-// auto sort featured first
+// sort featured first
 listingsData.sort((a,b)=>b.featured-a.featured);
 
 function createCard(l){
-  if(!l.images || !l.images.length){
-    l.images=['images/placeholder.jpg'];
-  }
-
-  const card=document.createElement('div');
-  card.className='card';
-
-  if(l.featured){
-    const badge=document.createElement('span');
-    badge.className='featured-badge';
-    badge.textContent='FEATURED';
-    card.appendChild(badge);
-  }
-
-  let index=0;
-  const slider=document.createElement('div');
-  slider.className='slider';
-
-  const track=document.createElement('div');
-  track.className='slider-track';
-
-  l.images.forEach(src=>{
-    const img=document.createElement('img');
-    img.src=src;
-    track.appendChild(img);
-  });
-
-  const left=document.createElement('button');
-  left.className='slider-btn left';
-  left.innerHTML='‹';
-  left.onclick=()=>{index=(index-1+l.images.length)%l.images.length;track.style.transform=`translateX(-${index*100}%)`};
-
-  const right=document.createElement('button');
-  right.className='slider-btn right';
-  right.innerHTML='›';
-  right.onclick=()=>{index=(index+1)%l.images.length;track.style.transform=`translateX(-${index*100}%)`};
-
+  if(!l.images || !l.images.length) l.images=['images/placeholder.jpg'];
+  const card=document.createElement('div'); card.className='card';
+  if(l.featured){ const badge=document.createElement('span'); badge.className='featured-badge'; badge.textContent='FEATURED'; card.appendChild(badge);}
+  let index=0; const slider=document.createElement('div'); slider.className='slider';
+  const track=document.createElement('div'); track.className='slider-track';
+  l.images.forEach(src=>{ const img=document.createElement('img'); img.src=src; track.appendChild(img); });
+  const left=document.createElement('button'); left.className='slider-btn left'; left.innerHTML='‹'; left.onclick=()=>{index=(index-1+l.images.length)%l.images.length; track.style.transform=`translateX(-${index*100}%)`};
+  const right=document.createElement('button'); right.className='slider-btn right'; right.innerHTML='›'; right.onclick=()=>{index=(index+1)%l.images.length; track.style.transform=`translateX(-${index*100}%)`};
   slider.append(track,left,right);
-
-  const body=document.createElement('div');
-  body.className='card-body';
-  body.innerHTML=`
-    <strong>${l.title}</strong>
-    <p class="details">${l.township}, ${l.province}</p>
-    <p class="details">💰 R${l.price} / ${l.priceType}</p>
-    <p class="details">${l.description}</p>
-    <a class="whatsapp" href="${l.whatsapp}" target="_blank">WhatsApp Owner</a>
-  `;
-
-  card.append(slider,body);
-  return card;
+  const body=document.createElement('div'); body.className='card-body';
+  body.innerHTML=`<strong>${l.title}</strong><p class="details">${l.township}, ${l.province}</p><p class="details">💰 R${l.price} / ${l.priceType}</p><p class="details">${l.description}</p><a class="whatsapp" href="${l.whatsapp}" target="_blank">WhatsApp Owner</a>`;
+  card.append(slider,body); return card;
 }
 
-function renderFeatured(){
-  const f=document.getElementById('featured');
-  f.innerHTML='';
-  listingsData.filter(l=>l.featured).slice(0,10).forEach(l=>f.appendChild(createCard(l)));
-}
+function renderFeatured(){ const f=document.getElementById('featured'); f.innerHTML=''; listingsData.filter(l=>l.featured).slice(0,10).forEach(l=>f.appendChild(createCard(l))); }
 
-function renderListings(){
-  const l=document.getElementById('listings');
-  l.innerHTML='';
-  const start=(currentPage-1)*PER_PAGE;
-  filteredData.slice(start,start+PER_PAGE).forEach(x=>l.appendChild(createCard(x)));
-  renderPagination();
-}
+function renderListings(){ const l=document.getElementById('listings'); l.innerHTML=''; const start=(currentPage-1)*PER_PAGE; filteredData.slice(start,start+PER_PAGE).forEach(x=>l.appendChild(createCard(x))); renderPagination(); }
 
-function renderPagination(){
-  const p=document.getElementById('pagination');
-  p.innerHTML='';
-  const pages=Math.ceil(filteredData.length/PER_PAGE);
-  for(let i=1;i<=pages;i++){
-    const b=document.createElement('button');
-    b.textContent=i;
-    if(i===currentPage)b.classList.add('active');
-    b.onclick=()=>{currentPage=i;renderListings()};
-    p.appendChild(b);
-  }
+function renderPagination(){ const p=document.getElementById('pagination'); p.innerHTML=''; const pages=Math.ceil(filteredData.length/PER_PAGE); for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===currentPage)b.classList.add('active'); b.onclick=()=>{currentPage=i; renderListings()}; p.appendChild(b);} }
+
+const townshipInput=document.getElementById('townshipFilter');
+const townshipInputMobile=document.getElementById('townshipFilterMobile');
+const autoBox=document.getElementById('autoBox');
+const autoBoxMobile=document.getElementById('autoBoxMobile');
+
+const townshipList=[...new Set(listingsData.flatMap(l=>[l.township,l.province,...l.title.split(' ')]))];
+
+function showSuggestions(input,box){
+  const val=input.value.toLowerCase();
+  box.innerHTML='';
+  if(!val){box.style.display='none';return;}
+  const matches=townshipList.filter(t=>t.toLowerCase().includes(val)).slice(0,10);
+  matches.forEach(name=>{const div=document.createElement('div');div.textContent=name;div.onclick=()=>{input.value=name; box.style.display='none'; applyFilters();}; box.appendChild(div);});
+  box.style.display=matches.length?'block':'none';
 }
 
 function applyFilters(){
-  const t=document.getElementById('townshipFilter').value.toLowerCase();
+  const t=townshipInput.value.toLowerCase();
   const type=document.getElementById('typeFilter').value;
-
-  filteredData=listingsData.filter(l=>{
-    return l.township.toLowerCase().includes(t) && (!type||l.type===type);
-  }).sort((a,b)=>b.featured-a.featured);
-
-  currentPage=1;
-  renderListings();
+  filteredData=listingsData.filter(l=>(!t||(l.township+' '+l.province+' '+l.title).toLowerCase().includes(t))&&(!type||l.type===type)).sort((a,b)=>b.featured-a.featured);
+  currentPage=1; renderListings();
 }
 
-filteredData=[...listingsData];
+function applyMobileFilters(){
+  document.getElementById('townshipFilter').value=document.getElementById('townshipFilterMobile').value;
+  document.getElementById('typeFilter').value=document.getElementById('typeFilterMobile').value;
+  mobileFilter.style.display='none';
+  applyFilters();
+}
+
+function resetFilters(){
+  document.getElementById('townshipFilter').value='';
+  document.getElementById('typeFilter').value='';
+  document.getElementById('townshipFilterMobile').value='';
+  document.getElementById('typeFilterMobile').value='';
+  applyFilters();
+}
+
 renderFeatured();
+filteredData=[...listingsData];
 renderListings();
+
+// Mobile filter toggle
+const openBtn=document.getElementById('openFilters');
+const closeBtn=document.getElementById('closeFilters');
+const mobileFilter=document.getElementById('mobileFilter');
+
+if(openBtn && mobileFilter) openBtn.onclick=()=>mobileFilter.style.display='block';
+if(closeBtn && mobileFilter) closeBtn.onclick=()=>mobileFilter.style.display='none';
+
+// Live search
+townshipInput.addEventListener('input',()=>{showSuggestions(townshipInput,autoBox); applyFilters();});
+townshipInputMobile.addEventListener('input',()=>{showSuggestions(townshipInputMobile,autoBoxMobile);});
+
+// Live dropdown
+document.getElementById('typeFilter').addEventListener('change',applyFilters);
+document.getElementById('typeFilterMobile').addEventListener('change',applyMobileFilters);
 </script>
 
 </body>
